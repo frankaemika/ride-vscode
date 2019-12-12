@@ -1,0 +1,257 @@
+$schema: https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json
+name: Lingua Franka
+scopeName: source.lf
+patterns:
+  - include: "#parameter"
+  - include: "#normalState"
+  - include: "#link"
+  - include: "#comment"
+
+repository:
+  state:
+    comment: State, barrier, or link
+    patterns:
+      - comment: Start state arrow
+        match: "(-->)(?=.*{)"
+        captures:
+          1: { name: keyword.control.start-state.lf }
+      - include: "#parameter"
+      - include: "#normalState"
+      - include: "#link"
+      - include: "#barrier"
+  normalState:
+    comment: Normal state
+    begin: '([_a-zA-Z][_a-zA-Z0-9]*)\s*{'
+    beginCaptures:
+      1: { name: entity.name.type.state.lf }
+    end: "}"
+    patterns:
+      - include: "#clientData"
+      - include: "#portDefinition"
+      - include: "#typeDeclaration"
+      - include: "#lua"
+      - include: "#state"
+      - include: "#expression"
+  link:
+    comment: Link
+    begin: '([_a-zA-Z][_a-zA-Z0-9]*)\s*(<-)\s*([_a-zA-Z][_a-zA-Z0-9]*)\s*{'
+    beginCaptures:
+      1: { name: entity.name.type.link.lf }
+      2: { name: keyword.other.link.lf }
+      3: { name: entity.other.inherited-class.lf }
+    end: "}"
+    patterns:
+      - include: "#clientData"
+      - include: "#portDeclaration"
+      - include: "#comment"
+  barrier:
+    comment: Barrier
+    begin: '(barrier)\s*([_a-zA-Z][_a-zA-Z0-9]*)\s*{'
+    beginCaptures:
+      1: { name: keyword.other.barrier.lf }
+      2: { name: entity.name.type.barrier.lf }
+    end: "}"
+    patterns:
+      - match: '^\s*(->)\s*([_a-zA-Z][_a-zA-Z0-9]*)'
+        captures:
+          1: { name: keyword.control.barrier.lf }
+          2: { name: entity.name.type.target.lf }
+      - include: "#comment"
+  typeDeclaration:
+    comment: Parameter/result/variable types
+    patterns:
+      - comment: Bracket-delimited type declarations
+        begin: '^\s*(parameterType|resultType|variableType)\s*{'
+        beginCaptures:
+          1: { name: keyword.other.type.lf }
+        end: "}"
+        patterns:
+          - include: "#type"
+      - comment: Single-line type declarations
+        begin: '^\s*(parameterType|resultType|variableType)\s*'
+        beginCaptures:
+          1: { name: keyword.other.type.lf }
+        end: "$"
+        patterns:
+          - include: "#type"
+  type:
+    comment: Struct, array, and primitive types
+    patterns:
+      - comment: Struct
+        begin: "{"
+        end: "}"
+        patterns:
+          - include: "#type"
+      - comment: Fixed/variable length array
+        match: '\[(\d+)\]'
+        captures:
+          1: { name: constant.numeric.lf }
+      - comment: Primitive type
+        match: '\b(int|string|float|bool)\b'
+        name: support.type.lf
+      - include: "#comment"
+  portDeclaration:
+    comment: Port declaration (without condition) and required connection
+    match: '^\s*(port)\s+([_a-zA-Z][_a-zA-Z0-9]*)\s*(->)\s*([_a-zA-Z][_a-zA-Z0-9]*)'
+    captures:
+      1: { name: keyword.other.port.lf }
+      2: { name: entity.name.function.port.lf }
+      3: { name: keyword.control.port.lf }
+      4: { name: entity.name.type.target.lf }
+  portDefinition:
+    comment: Port definition (with condition) and optional connection
+    patterns:
+      - match: '^\s*(port)\s+([_a-zA-Z][_a-zA-Z0-9]*)'
+        captures:
+          1: { name: keyword.other.port.lf }
+          2: { name: entity.name.function.port.lf }
+      - match: '(->)\s*([_a-zA-Z][_a-zA-Z0-9]*)'
+        captures:
+          1: { name: keyword.control.port.lf }
+          2: { name: entity.name.type.target.lf }
+  builtin:
+    comment: Built-in functions and variables
+    patterns:
+      - comment: Built-in functions
+        match: '\b(service|event|operation|child|port)\s*\('
+        captures:
+          1: { name: support.function.lf }
+      - comment: Built-in variables
+        match: '\b(?:parent|parameter|result|variable)\b'
+        name: support.variable.lf
+  literal:
+    patterns:
+      - comment: 'Single-line string literals, e.g. "Error: \"collision\""'
+        begin: '"'
+        end: '"'
+        name: string.quoted.double.lf
+        includes:
+          - match: '\\.'
+            name: constant.character.escape.lf
+      - comment: Boolean literals
+        match: '\b(?:true|false)\b'
+        name: constant.language.lf
+      - comment: Nil literal
+        match: '\b(?:nil)\b'
+        name: constant.language.lf
+      - comment: Float literals, e.g. 0.2
+        match: '\b\d?\\.\d+\b'
+        name: constant.numeric.lf
+      - comment: Integer literals, e.g. 123
+        match: '\b\d+\b'
+        name: constant.numeric.lf
+  operator:
+    comment: Boolean and arithmetic operators
+    patterns:
+      - comment: Space-separated operators
+        match: '(?<=\s)(==|~=|<=?|>=?|and|or|not)(?=\s)'
+        captures:
+          1: { name: keyword.operator.lf }
+      - comment: Inline operators
+        match: '\+|-|\*|\/|#'
+        name: keyword.operator.lf
+  expression:
+    comment: Expression in port/action condition or where block
+    patterns:
+      - include: "#comment"
+      - include: "#builtin"
+      - include: "#operator"
+      - include: "#literal"
+      - comment: Nesting
+        begin: "{"
+        end: "}"
+        patterns:
+          - include: "#expression"
+  lua:
+    comment: Embedded Lua in action, entry, exit blocks
+    patterns:
+      - comment: Entry/exit keywords
+        match: '^\s*(entry|exit|action)'
+        name: keyword.other.lua.lf
+      # HACK: Highlight all multi-line strings as Lua
+      - comment: Multi-line Lua blocks
+        begin: "@{"
+        end: "}@"
+        contentName: meta.embedded.block.lua
+        patterns:
+          - include: source.lua
+      # Not supported: Highlighting for action Lua code
+      - comment: Single-line entry/exit Lua strings
+        begin: '(?<=entry|exit)\s*"'
+        end: '$|"'
+        contentName: meta.embedded.inline.lua
+        patterns:
+          - include: source.lua
+  parameter:
+    comment: Parameter definitions ("where" blocks)
+    patterns:
+      - comment: Multi-line where block
+        begin: '\b(where)\s*{'
+        beginCaptures:
+          1: { name: keyword.other.parameter.lf }
+        end: "}"
+        patterns:
+          - include: "#expression"
+      - comment: Single-line where expression
+        begin: '\b(where)\s+'
+        beginCaptures:
+          1: { name: keyword.other.parameter.lf }
+        end: "$"
+        patterns:
+          - include: "#expression"
+  image:
+    comment: Embedded SVG in image blocks
+    begin: 'image\s*:\s+@{'
+    end: "}@;"
+    patterns:
+      - include: "text.html.basic#svg"
+      - include: "text.html.basic#tags-invalid"
+    contentName: meta.embedded.block.html
+  contextMenu:
+    comment: Embedded HTML in context menus
+    begin: 'contextMenu\s*:\s+@{'
+    end: "}@;"
+    contentName: meta.embedded.block.html
+    patterns:
+      - comment: Highlighting for <viewmodel> (does not support attributes)
+        name: meta.embedded.block.html
+        begin: "(<)(viewmodel)(>)"
+        beginCaptures:
+          0: { name: meta.tag.metadata.script.start.html }
+          1: { name: punctuation.definition.tag.begin.html }
+          2: { name: entity.name.tag.html }
+          3: { name: punctuation.definition.tag.end.html }
+        end: "(</)(viewmodel)(>)"
+        endCaptures:
+          0: { name: meta.tag.metadata.script.end.html }
+          1: { name: punctuation.definition.tag.begin.html }
+          2: { name: entity.name.tag.html }
+          3: { name: punctuation.definition.tag.end.html }
+        contentName: source.js
+        patterns:
+          - include: source.js
+          - include: text.html.derivative
+      - include: text.html.derivative
+  description:
+    comment: Embedded Markdown in description blocks
+    begin: 'description\s*:\s+@{'
+    end: "}@;"
+    contentName: meta.embedded.block.markdown
+    patterns:
+      # Our embedded descriptions are usually indented, so Markdown block highlighting does not work
+      - include: "text.html.markdown#inline"
+  clientData:
+    comment: Client data blocks
+    begin: '^\s*(clientData)\s*{'
+    beginCaptures:
+      1: { name: keyword.other.clientdata.lf }
+    end: "}"
+    patterns:
+      - include: "#image"
+      - include: "#contextMenu"
+      - include: "#description"
+      - include: "#expression"
+  comment:
+    comment: Single-line comments
+    match: "--.*$"
+    name: comment.line.double-dash

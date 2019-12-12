@@ -1,0 +1,70 @@
+{
+    "name": "ride-vscode",
+    "version": "0.1.0",
+    "displayName": "RIDE",
+    "description": "Tools for Franka Emika App development",
+    "license": "UNLICENSED",
+    "author": {
+        "name": "Franka Emika GmbH",
+        "url": "https://www.franka.de"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/frankaemika/ride-vscode"
+    },
+    "bugs": {
+        "url": "https://github.com/frankaemika/ride-vscode/issues",
+        "email": "support@franka.de"
+    },
+    "publisher": "FrankaEmika",
+    "categories": [
+        "Programming Languages"
+    ],
+    "keywords": [
+        "robotics"
+    ],
+    "icon": "images/logo.png",
+    "galleryBanner": {
+        "color": "#1A282D",
+        "theme": "dark"
+    },
+    "engines": {
+        "vscode": "^1.40.0"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "lf",
+                "aliases": [
+                    "Lingua Franka",
+                    "LF",
+                    "lf"
+                ],
+                "extensions": [
+                    ".lf"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "lf",
+                "scopeName": "source.lf",
+                "path": "./out/lf.tmLanguage.json",
+                "embeddedLanguages": {
+                    "meta.embedded.block.lua": "lua",
+                    "meta.embedded.block.html": "html",
+                    "meta.embedded.block.markdown": "markdown"
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json"
+    },
+    "devDependencies": {
+        "js-yaml": "^3.13.1",
+        "vsce": "^1.71.0"
+    }
+}
