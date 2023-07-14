@@ -1,6 +1,6 @@
 {
     "name": "ride-vscode",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "displayName": "RIDE",
     "description": "Tools for Franka Emika App development",
     "license": "Apache-2.0",
@@ -31,7 +31,21 @@
     "engines": {
         "vscode": "^1.40.0"
     },
+    "main": "./out/extension.js",
     "contributes": {
+        "configuration": [
+            {
+                "type": "object",
+                "title": "RIDE configuration",
+                "properties": {
+                    "ride.ridePath": {
+                        "type": "string",
+                        "default": "ride",
+                        "description": "Path to the ride-cli executable"
+                    }
+                }
+            }
+        ],
         "languages": [
             {
                 "id": "lf",
@@ -61,10 +75,16 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json"
+        "compile:tmLanguage": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json",
+        "compile:js": "tsc -p ./",
+        "compile": "npm run compile:tmLanguage && npm run compile:js"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^5.2.1"
     },
     "devDependencies": {
         "js-yaml": "^3.14.1",
-        "vsce": "^1.81.1"
+        "vsce": "^1.81.1",
+        "@types/vscode": "^1.39.0"
     }
 }
