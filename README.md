@@ -7,6 +7,13 @@ App development tools for Visual Studio Code.
 The following features have been implemented:
 
 * Syntax highlighting for `.lf` files, including Lua and context menu HTML blocks.
+* Language Server support for `.lf` files
+  * Diagnostics (lf syntax errors)
+  * Jump to definition
+  * List references
+  * Show type definition of linked statemachines
+  * Auto completion
+  * Integrated lua language server
 
 ## Requirements
 

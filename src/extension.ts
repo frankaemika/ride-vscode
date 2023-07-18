@@ -4,7 +4,7 @@ import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-} from "vscode-languageclient";
+} from "vscode-languageclient/node";
 import { RideConfiguration } from "./configuration";
 
 const execFile = util.promisify(require("child_process").execFile);
