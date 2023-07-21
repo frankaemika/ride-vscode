@@ -17,7 +17,7 @@ The following features have been implemented:
 
 ## Requirements
 
-* Visual Studio Code 1.40.
+* Visual Studio Code 1.80.1.
 
 ## License
 
