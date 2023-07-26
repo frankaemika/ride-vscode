@@ -1,6 +1,6 @@
 {
     "name": "ride-vscode",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "displayName": "RIDE",
     "description": "Tools for Franka Emika App development",
     "license": "Apache-2.0",
@@ -29,9 +29,24 @@
         "theme": "dark"
     },
     "engines": {
-        "vscode": "^1.40.0"
+        "vscode": "^1.80.1"
     },
+    "main": "./out/extension.js",
+    "activationEvents": [],
     "contributes": {
+        "configuration": [
+            {
+                "type": "object",
+                "title": "RIDE configuration",
+                "properties": {
+                    "ride.ridePath": {
+                        "type": "string",
+                        "default": "ride",
+                        "description": "Path to the ride-cli executable"
+                    }
+                }
+            }
+        ],
         "languages": [
             {
                 "id": "lf",
@@ -60,11 +75,20 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json"
+        "vscode:prepublish": "npm run -S esbuild-base -- --minify",
+        "esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && npm run compile:tmLanguage",
+        "compile:tmLanguage": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json",
+        "compile:js": "npm run -S esbuild-base -- --sourcemap",
+        "compile": "npm run compile:tmLanguage && npm run compile:js"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^8.1.0"
     },
     "devDependencies": {
+        "@types/node": "^20.4.2",
+        "@types/vscode": "^1.80.0",
+        "esbuild": "^0.18.14",
         "js-yaml": "^3.14.1",
-        "vsce": "^1.81.1"
+        "rimraf": "^5.0.1"
     }
 }
