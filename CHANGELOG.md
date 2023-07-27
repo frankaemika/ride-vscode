@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.2.0 - UNRELEASED
+## 0.2.0 - 2023-07-27
 
 * Integrate lf-language-server.
 
