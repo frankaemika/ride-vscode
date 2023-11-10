@@ -11,7 +11,7 @@ The following features have been implemented:
   * Diagnostics (lf syntax errors)
   * Jump to definition
   * List references
-  * Show type definition of linked statemachines
+  * Show type definition of linked state machines
   * Auto completion
   * Integrated lua language server
 
@@ -31,7 +31,7 @@ At present, we do not offer a ride-cli package that directly runs on Windows. To
 ![](images/vscode-connect-to-wsl.png)
 4. Install the [RIDE plugin](https://marketplace.visualstudio.com/items?itemName=FrankaEmika.ride-vscode) in the WSL environment.
 ![](images/install-ride-plugin-in-wsl.png)
-5. Open your statemachines / bundles in the WSL file system. Now you're ready to use the full features of this plugin on Windows.
+5. Open your state machines / bundles in the WSL file system. Now you're ready to use the full features of this plugin on Windows.
 
 Further information about developing in WSL can be found [here](https://code.visualstudio.com/docs/remote/wsl).
 

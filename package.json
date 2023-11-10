@@ -1,6 +1,6 @@
 {
     "name": "ride-vscode",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "displayName": "RIDE",
     "description": "Tools for Franka Robotics App development",
     "license": "Apache-2.0",
@@ -18,7 +18,8 @@
     },
     "publisher": "FrankaEmika",
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Debuggers"
     ],
     "keywords": [
         "robotics"
@@ -71,6 +72,46 @@
                     "meta.embedded.block.html": "html",
                     "meta.embedded.block.markdown": "markdown"
                 }
+            }
+        ],
+        "breakpoints": [{ "language": "lf" }],
+        "debuggers": [
+            {
+              "type": "lf",
+              "label": "Lingua Franka Debug",
+              "languages": ["lf"],
+              "configurationAttributes": {
+                "launch": {
+                  "required": ["stateMachine"],
+                  "properties": {
+                    "stateMachine": {
+                      "type": "string",
+                      "description": "State machine to debug.",
+                      "default": "${fileBasenameNoExtension}"
+                    }
+                  }
+                }
+              },
+              "initialConfigurations": [
+                {
+                  "type": "lf",
+                  "request": "launch",
+                  "name": "LF Debug Current",
+                  "stateMachine": "${fileBasenameNoExtension}"
+                }
+              ],
+              "configurationSnippets": [
+                {
+                  "label": "LF: Debug state machine",
+                  "description": "A new configuration for debugging the specified state machine.",
+                  "body": {
+                    "type": "lf",
+                    "request": "launch",
+                    "name": "${1:LF Debug}",
+                    "stateMachine": "${2:State machine}"
+                  }
+                }
+              ]
             }
         ]
     },
