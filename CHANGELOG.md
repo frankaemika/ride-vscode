@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.0 - UNRELEASED
+
+* Rename `Franka Emika` to `Franka Robotics`.
+
 ## 0.2.0 - 2023-07-27
 
 * Integrate lf-language-server.

@@ -2,10 +2,10 @@
     "name": "ride-vscode",
     "version": "0.2.0",
     "displayName": "RIDE",
-    "description": "Tools for Franka Emika App development",
+    "description": "Tools for Franka Robotics App development",
     "license": "Apache-2.0",
     "author": {
-        "name": "Franka Emika GmbH",
+        "name": "Franka Robotics GmbH",
         "url": "https://www.franka.de"
     },
     "repository": {
