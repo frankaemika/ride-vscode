@@ -3,6 +3,7 @@
 ## 0.3.0 - UNRELEASED
 
 * Rename `Franka Emika` to `Franka Robotics`.
+* Add syntax highlighting for state interfaces, dynamic links and anonymous states.
 
 ## 0.2.0 - 2023-07-27
 
