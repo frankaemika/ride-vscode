@@ -6,43 +6,82 @@ import {
   ServerOptions,
 } from "vscode-languageclient/node";
 import { RideConfiguration } from "./configuration";
+import { StatemachineVisualization } from "./statemachineVisualization";
 
 const execFile = util.promisify(require("child_process").execFile);
 
 let languageClient: LanguageClient;
 
-export async function activate() {
-  let configuration = new RideConfiguration(
+interface MermaidDiagramNotification {
+  uri: string;
+  diagram: string;
+}
+
+export async function activate(context: vscode.ExtensionContext) {
+  const configuration = new RideConfiguration(
     vscode.workspace.getConfiguration()
   );
 
+  const { rideSupportsLsp, rideSupportsVisualization } =
+    await checkRideFeatures(configuration);
+
+  if (!rideSupportsLsp) {
+    vscode.window.showWarningMessage(
+      "Ride does not support lsp. Please upgrade."
+    );
+    return;
+  }
+
+  const languageClient = initializeLanguageClient(configuration);
+  await languageClient.start();
+  context.subscriptions.push(languageClient);
+
+  if (!rideSupportsVisualization) {
+    vscode.window.showWarningMessage(
+      "Ride does not support lf statemachine visualization. Please upgrade."
+    );
+    return;
+  }
+
+  const diagramStore: { [uri: string]: string } = {};
+  setUpVisualizationSupport(context, languageClient, diagramStore);
+  StatemachineVisualization.createWebview(context);
+}
+
+export async function deactivate() {
+  if (languageClient) {
+    await languageClient.stop();
+  }
+}
+
+async function checkRideFeatures(configuration: RideConfiguration) {
   let rideSupportsLsp = false;
+  let rideSupportsVisualization = false;
+
   try {
     const versionResult = await execFile(
       configuration.ridePath,
       ["--version"],
       {}
     );
-    const version: string = versionResult.stdout;
-    const versionParts = version.split(".").map((v) => parseInt(v));
-    if (
-      versionParts.length == 3 &&
-      (versionParts[0] > 0 || (versionParts[0] == 0 && versionParts[1] > 8))
-    ) {
-      rideSupportsLsp = true;
-    }
+    const versionParts = versionResult.stdout
+      .split(".")
+      .map((v) => parseInt(v, 10));
+
+    const semverSatisfies = require("semver/functions/satisfies");
+    rideSupportsLsp = semverSatisfies(versionResult.stdout, ">=0.9.0");
+    rideSupportsVisualization = semverSatisfies(
+      versionResult.stdout,
+      ">=0.9.1"
+    );
   } catch (e) {
     vscode.window.showWarningMessage("Ride executable not found!");
-    return;
   }
 
-  if (!rideSupportsLsp) {
-    vscode.window.showWarningMessage(
-      "Ride does not support lsp, consider upgrading to the latest ride version to get language server support for lf files."
-    );
-    return;
-  }
+  return { rideSupportsLsp, rideSupportsVisualization };
+}
 
+function initializeLanguageClient(configuration) {
   const serverOptions: ServerOptions = {
     command: configuration.ridePath,
     args: ["language-server"],
@@ -58,19 +97,38 @@ export async function activate() {
     ],
   };
 
-  // Create the language client and start the client.
-  languageClient = new LanguageClient(
+  return new LanguageClient(
     "rideLanguageClient",
     "RIDE Language Server",
     serverOptions,
     clientOptions
   );
-
-  languageClient.start();
 }
 
-export async function deactivate() {
-  if (languageClient) {
-    await languageClient.stop();
-  }
+function setUpVisualizationSupport(context, languageClient, diagramStore) {
+  languageClient.onNotification(
+    "lfls/mermaidVisualization",
+    (notification: MermaidDiagramNotification) => {
+      const { uri, diagram } = notification;
+      diagramStore[uri] = diagram;
+      StatemachineVisualization.currentPanel?.updateStatemachineVisualization(
+        diagram
+      );
+    }
+  );
+
+  let disposable = vscode.window.onDidChangeActiveTextEditor((editor) => {
+    if (!editor) return;
+    const { fileName, languageId } = editor.document;
+
+    if (fileName.endsWith(".lf") || languageId === "lf") {
+      const diagram = diagramStore[`file://${editor.document.fileName}`];
+      if (diagram) {
+        StatemachineVisualization.currentPanel?.updateStatemachineVisualization(
+          diagram
+        );
+      }
+    }
+  });
+  context.subscriptions.push(disposable);
 }

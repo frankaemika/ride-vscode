@@ -1,6 +1,6 @@
 {
     "name": "ride-vscode",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "displayName": "RIDE",
     "description": "Tools for Franka Robotics App development",
     "license": "Apache-2.0",
@@ -76,12 +76,16 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run -S esbuild-base -- --minify",
-        "esbuild-base": "rimraf out && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && npm run compile:tmLanguage",
+        "esbuild-base": "rimraf out && esbuild ./src/extension.ts ./src/configuration.ts ./src/statemachineVisualization.ts ./src/mermaidVisualization.mjs --bundle --outdir=out/ --external:vscode --format=cjs --platform=node --loader:.css=css --loader:.html=text && npm run copy-assets",
+        "copy-assets": "npx copyfiles -u 1 src/mermaidVisualization.html src/styles.css out",
         "compile:tmLanguage": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json",
         "compile:js": "npm run -S esbuild-base -- --sourcemap",
         "compile": "npm run compile:tmLanguage && npm run compile:js"
     },
     "dependencies": {
+        "mermaid": "^10.6.1",
+        "panzoom": "^9.4.0",
+        "semver": "^7.5.4",
         "vscode-languageclient": "^8.1.0"
     },
     "devDependencies": {
