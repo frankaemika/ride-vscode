@@ -11,7 +11,7 @@ const execFile = util.promisify(require("child_process").execFile);
 
 let languageClient: LanguageClient;
 
-export async function activate() {
+export async function activate(context: vscode.ExtensionContext) {
   let configuration = new RideConfiguration(
     vscode.workspace.getConfiguration()
   );
@@ -67,10 +67,39 @@ export async function activate() {
   );
 
   languageClient.start();
+
+  context.subscriptions.push(
+    vscode.debug.registerDebugAdapterDescriptorFactory(
+      "lf",
+      new DebugAdapterExecutableFactory(configuration)
+    )
+  );
 }
 
 export async function deactivate() {
   if (languageClient) {
     await languageClient.stop();
+  }
+}
+
+class DebugAdapterExecutableFactory
+  implements vscode.DebugAdapterDescriptorFactory
+{
+  private readonly rideConfig: RideConfiguration;
+
+  constructor(rideConfig: RideConfiguration) {
+    this.rideConfig = rideConfig;
+  }
+
+  createDebugAdapterDescriptor(
+    session: vscode.DebugSession,
+    _executable: vscode.DebugAdapterExecutable | undefined
+  ): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+    return new vscode.DebugAdapterExecutable(this.rideConfig.ridePath, [
+      "execution",
+      "debug",
+      session.configuration["stateMachine"],
+      "-i",
+    ]);
   }
 }
