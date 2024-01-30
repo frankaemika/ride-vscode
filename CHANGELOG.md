@@ -4,11 +4,12 @@
 
 * Rename `Franka Emika` to `Franka Robotics`.
 * Add syntax highlighting for state interfaces, dynamic links and anonymous states.
+* Integrate LF Debugger. (PSWH-327)
 * Visualize the LF state machine in a separate tab.
 
 ## 0.2.0 - 2023-07-27
 
-* Integrate lf-language-server.
+* Integrate LF Language Server.
 
 ## 0.1.0 - 2020-12-16
 

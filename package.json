@@ -18,7 +18,8 @@
     },
     "publisher": "FrankaEmika",
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Debuggers"
     ],
     "keywords": [
         "robotics"
@@ -78,6 +79,46 @@
                     "meta.embedded.block.markdown": "markdown"
                 }
             }
+        ],
+        "breakpoints": [{ "language": "lf" }],
+        "debuggers": [
+            {
+              "type": "lf",
+              "label": "Lingua Franka Debug",
+              "languages": ["lf"],
+              "configurationAttributes": {
+                "launch": {
+                  "required": ["stateMachine"],
+                  "properties": {
+                    "stateMachine": {
+                      "type": "string",
+                      "description": "State machine to debug.",
+                      "default": "${fileBasenameNoExtension}"
+                    }
+                  }
+                }
+              },
+              "initialConfigurations": [
+                {
+                  "type": "lf",
+                  "request": "launch",
+                  "name": "LF Debug Current",
+                  "stateMachine": "${fileBasenameNoExtension}"
+                }
+              ],
+              "configurationSnippets": [
+                {
+                  "label": "LF: Debug state machine",
+                  "description": "A new configuration for debugging the specified state machine.",
+                  "body": {
+                    "type": "lf",
+                    "request": "launch",
+                    "name": "${1:LF Debug}",
+                    "stateMachine": "${2:State machine}"
+                  }
+                }
+              ]
+            }
         ]
     },
     "scripts": {
@@ -97,6 +138,7 @@
     "devDependencies": {
         "@types/node": "^20.4.2",
         "@types/vscode": "^1.80.0",
+        "copyfiles": "^2.4.1",
         "esbuild": "^0.18.14",
         "js-yaml": "^3.14.1",
         "rimraf": "^5.0.1"

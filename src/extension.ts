@@ -35,6 +35,12 @@ export async function activate(context: vscode.ExtensionContext) {
   const languageClient = initializeLanguageClient(configuration);
   await languageClient.start();
   context.subscriptions.push(languageClient);
+  context.subscriptions.push(
+    vscode.debug.registerDebugAdapterDescriptorFactory(
+      "lf",
+      new DebugAdapterExecutableFactory(configuration)
+    )
+  );
 
   if (!rideSupportsVisualization) {
     vscode.window.showWarningMessage(
@@ -141,4 +147,26 @@ function setUpVisualizationSupport(context, languageClient, diagramStore) {
     }
   });
   context.subscriptions.push(disposable);
+}
+
+class DebugAdapterExecutableFactory
+  implements vscode.DebugAdapterDescriptorFactory
+{
+  private readonly rideConfig: RideConfiguration;
+
+  constructor(rideConfig: RideConfiguration) {
+    this.rideConfig = rideConfig;
+  }
+
+  createDebugAdapterDescriptor(
+    session: vscode.DebugSession,
+    _executable: vscode.DebugAdapterExecutable | undefined
+  ): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+    return new vscode.DebugAdapterExecutable(this.rideConfig.ridePath, [
+      "execution",
+      "debug",
+      session.configuration["stateMachine"],
+      "-i",
+    ]);
+  }
 }
