@@ -18,13 +18,13 @@ export class StatemachineVisualization {
       return;
     }
     const panel = vscode.window.createWebviewPanel(
-      "statemachinePreview",
+      "stateMachinePreview",
       StatemachineVisualization.title,
       vscode.ViewColumn.Two,
       {
         enableScripts: true,
         localResourceRoots: [
-          vscode.Uri.joinPath(extensionContext.extensionUri, "out"),
+          vscode.Uri.joinPath(extensionContext.extensionUri, "out", "stateMachineVisualizationWebview"),
           vscode.Uri.joinPath(extensionContext.extensionUri, "images"),
         ],
       }
@@ -108,11 +108,13 @@ export class StatemachineVisualization {
   private async _getWebviewContent(webview: vscode.Webview) {
     const mermaidVisualizationUri = vscode.Uri.joinPath(
       this._extensionUri,
-      "out"
+      "out",
+      "stateMachineVisualizationWebview"
     );
     const webviewPath = vscode.Uri.joinPath(
       this._extensionUri,
       "out",
+      "stateMachineVisualizationWebview",
       "mermaidVisualization.html"
     );
     const webviewContent = await vscode.workspace.fs.readFile(webviewPath);

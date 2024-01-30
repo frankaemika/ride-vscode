@@ -6,7 +6,7 @@ import {
   ServerOptions,
 } from "vscode-languageclient/node";
 import { RideConfiguration } from "./configuration";
-import { StatemachineVisualization } from "./statemachineVisualization";
+import { StatemachineVisualization } from "./stateMachineVisualization";
 
 const execFile = util.promisify(require("child_process").execFile);
 
@@ -38,7 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   if (!rideSupportsVisualization) {
     vscode.window.showWarningMessage(
-      "Ride does not support lf statemachine visualization. Please upgrade."
+      "Ride does not support lf state machine visualization. Please upgrade."
     );
     return;
   }

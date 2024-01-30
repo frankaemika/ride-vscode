@@ -49,8 +49,8 @@
         ],
         "commands": [
             {
-                "command": "extension.openStatemachineVisualization",
-                "title": "RIDE: Open LF Statemachine Visualization"
+                "command": "extension.openStateMachineVisualization",
+                "title": "RIDE: Open LF State Machine Visualization"
             }
         ],
         "languages": [
@@ -82,8 +82,8 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run -S esbuild-base -- --minify",
-        "esbuild-base": "rimraf out && esbuild ./src/extension.ts ./src/configuration.ts ./src/statemachineVisualization.ts ./src/mermaidVisualization.mjs --bundle --outdir=out/ --external:vscode --format=cjs --platform=node --loader:.css=css --loader:.html=text && npm run copy-assets",
-        "copy-assets": "npx copyfiles -u 1 src/mermaidVisualization.html src/styles.css out",
+        "esbuild-base": "rimraf out && esbuild ./src/extension.ts ./src/configuration.ts ./src/stateMachineVisualization.ts ./src/stateMachineVisualizationWebview/mermaidVisualization.ts --bundle --outdir=out/ --external:vscode --format=cjs --platform=node --loader:.css=css --loader:.html=text && npm run copy-assets",
+        "copy-assets": "npx copyfiles -u 1 src/stateMachineVisualizationWebview/mermaidVisualization.html src/stateMachineVisualizationWebview/styles.css out",
         "compile:tmLanguage": "mkdir -p out && npx js-yaml syntaxes/lf.tmLanguage.yaml > out/lf.tmLanguage.json",
         "compile:js": "npm run -S esbuild-base -- --sourcemap",
         "compile": "npm run compile:tmLanguage && npm run compile:js"

@@ -4,7 +4,7 @@
 
 * Rename `Franka Emika` to `Franka Robotics`.
 * Add syntax highlighting for state interfaces, dynamic links and anonymous states.
-* Visualize the LF statemachine in a separate tab.
+* Visualize the LF state machine in a separate tab.
 
 ## 0.2.0 - 2023-07-27
 

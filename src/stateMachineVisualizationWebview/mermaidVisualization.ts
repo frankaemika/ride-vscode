@@ -6,27 +6,29 @@ mermaid.initialize({
   theme: "neutral",
 });
 
-window.addEventListener("message", async (event) => {
+window.addEventListener("message", async (event: MessageEvent) => {
   if (event.data.command === "update") {
     await updateDiagram(event.data.content);
     setupDiagramInteractions();
   }
 });
 
-async function updateDiagram(content) {
-  const element = document.getElementById("mermaidDiagram");
-  const { svg } = await mermaid.render("statemachineSvg", content);
+async function updateDiagram(content: string): Promise<void> {
+  const element = document.getElementById("mermaidDiagram") as HTMLElement;
+  const { svg } = await mermaid.render("stateMachineSvg", content);
   element.innerHTML = svg;
 }
 
-function setupDiagramInteractions() {
-  const svgElement = document.getElementById("statemachineSvg");
-  const panzoomInstance = panzoom(svgElement, {
-    minZoom: 0.5,
-    contain: "outside",
-  });
-  setupResetButton(panzoomInstance);
-  setupDownloadButton(svgElement);
+function setupDiagramInteractions(): void {
+  const svgElement = document.getElementById("stateMachineSvg");
+
+  if (svgElement instanceof SVGElement) {
+    const panzoomInstance = panzoom(svgElement, {
+      minZoom: 0.5,
+    });
+    setupResetButton(panzoomInstance);
+    setupDownloadButton(svgElement);
+  }
 }
 
 function setupResetButton(panzoomInstance) {
@@ -45,7 +47,7 @@ function setupDownloadButton(svgElement) {
     const svgUrl = URL.createObjectURL(svgBlob);
     const downloadLink = document.createElement("a");
     downloadLink.href = svgUrl;
-    downloadLink.download = "statemachine_diagram.svg";
+    downloadLink.download = "state_machine_diagram.svg";
     downloadLink.click();
   });
 }
