@@ -45,6 +45,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const diagramStore: { [uri: string]: string } = {};
   setUpVisualizationSupport(context, languageClient, diagramStore);
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "extension.openStatemachineVisualization",
+      () => {
+        StatemachineVisualization.createWebview(context);
+      }
+    )
+  );
+
   StatemachineVisualization.createWebview(context);
 }
 

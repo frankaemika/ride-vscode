@@ -11,6 +11,12 @@ export class StatemachineVisualization {
   private _disposables: vscode.Disposable[] = [];
 
   public static createWebview(extensionContext: vscode.ExtensionContext): void {
+    if (StatemachineVisualization.currentPanel) {
+      StatemachineVisualization.currentPanel._panel.reveal(
+        vscode.ViewColumn.Two
+      );
+      return;
+    }
     const panel = vscode.window.createWebviewPanel(
       "statemachinePreview",
       StatemachineVisualization.title,
