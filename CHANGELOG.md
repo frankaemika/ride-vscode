@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.3.0 - UNRELEASED
+## 0.3.0 - 2024-01-31
 
 * Rename `Franka Emika` to `Franka Robotics`.
 * Add syntax highlighting for state interfaces, dynamic links and anonymous states.

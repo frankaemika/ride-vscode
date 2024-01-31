@@ -1,8 +1,8 @@
 {
-    "name": "ride-vscode",
+    "name": "ride",
     "version": "0.3.0",
-    "displayName": "RIDE",
-    "description": "Tools for Franka Robotics App development",
+    "displayName": "RIDE by Franka Robotics",
+    "description": "App development tools for Franka robots",
     "license": "Apache-2.0",
     "author": {
         "name": "Franka Robotics GmbH",
@@ -16,7 +16,7 @@
         "url": "https://github.com/frankaemika/ride-vscode/issues",
         "email": "support@franka.de"
     },
-    "publisher": "FrankaEmika",
+    "publisher": "FrankaRobotics",
     "categories": [
         "Programming Languages",
         "Debuggers"

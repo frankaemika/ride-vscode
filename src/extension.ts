@@ -6,7 +6,7 @@ import {
   ServerOptions,
 } from "vscode-languageclient/node";
 import { RideConfiguration } from "./configuration";
-import { StatemachineVisualization } from "./stateMachineVisualization";
+import { StateMachineVisualization } from "./stateMachineVisualization";
 
 const execFile = util.promisify(require("child_process").execFile);
 
@@ -56,12 +56,12 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "extension.openStateMachineVisualization",
       () => {
-        StatemachineVisualization.createWebview(context);
+        StateMachineVisualization.createWebview(context);
       }
     )
   );
 
-  StatemachineVisualization.createWebview(context);
+  StateMachineVisualization.createWebview(context);
 }
 
 export async function deactivate() {
@@ -124,7 +124,7 @@ function setUpVisualizationSupport(context, languageClient, diagramStore) {
     (notification: MermaidDiagramNotification) => {
       const { uri, diagram } = notification;
       diagramStore[uri] = diagram;
-      StatemachineVisualization.currentPanel?.updateStatemachineVisualization(
+      StateMachineVisualization.currentPanel?.updateStateMachineVisualization(
         diagram
       );
     }
@@ -137,7 +137,7 @@ function setUpVisualizationSupport(context, languageClient, diagramStore) {
     if (fileName.endsWith(".lf") || languageId === "lf") {
       const diagram = diagramStore[`file://${editor.document.fileName}`];
       if (diagram) {
-        StatemachineVisualization.currentPanel?.updateStatemachineVisualization(
+        StateMachineVisualization.currentPanel?.updateStateMachineVisualization(
           diagram
         );
       }
