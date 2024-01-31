@@ -37,6 +37,6 @@ Further information about developing in WSL can be found [here](https://code.vis
 
 ## License
 
-`ride-vscode` is licensed under the [Apache 2.0 license][apache-2.0]
+`ride-vscode` is licensed under the [Apache 2.0 license][apache-2.0]. The icons in the *images/icons* folder are from the *Google Material Icons Library* and are licensed under the [Apache 2.0 license][apache-2.0].
 
 [apache-2.0]: https://www.apache.org/licenses/LICENSE-2.0.html
