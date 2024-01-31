@@ -54,7 +54,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "extension.openStatemachineVisualization",
+      "extension.openStateMachineVisualization",
       () => {
         StatemachineVisualization.createWebview(context);
       }
@@ -80,15 +80,12 @@ async function checkRideFeatures(configuration: RideConfiguration) {
       ["--version"],
       {}
     );
-    const versionParts = versionResult.stdout
-      .split(".")
-      .map((v) => parseInt(v, 10));
 
     const semverSatisfies = require("semver/functions/satisfies");
     rideSupportsLsp = semverSatisfies(versionResult.stdout, ">=0.9.0");
     rideSupportsVisualization = semverSatisfies(
       versionResult.stdout,
-      ">=0.9.1"
+      ">=1.0.0"
     );
   } catch (e) {
     vscode.window.showWarningMessage("Ride executable not found!");
